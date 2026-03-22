@@ -39,7 +39,13 @@ const DEFAULT_SETTINGS = {
     bColor2: "#CDF469",
     bColor3: "#A0CCF6",
     bColor4: "#F0A7D8",
-    bColor5: "#ADEFEF"
+    bColor5: "#ADEFEF",
+    darkBColor1: "#7A4A16",
+    darkBColor2: "#5C6F18",
+    darkBColor3: "#24558F",
+    darkBColor4: "#7A2F67",
+    darkBColor5: "#1B6C6B",
+    darkHighlightTextColor: "#FEF2DF"
 };
 
 const 高亮样式预设 = {
@@ -54,14 +60,14 @@ const 高亮样式预设 = {
         样式: (color) => `background:${color}; padding:0.08em 0.38em; border-radius:999px; box-decoration-break:clone; -webkit-box-decoration-break:clone;`
     },
     "marker-line": {
-        名称: "记号笔",
-        描述: "保留原生高亮感觉，但边缘更柔和，阅读更轻松。",
-        样式: (color) => `background:linear-gradient(180deg, transparent 16%, ${color} 16%, ${color} 88%, transparent 88%); padding:0 0.08em; box-decoration-break:clone; -webkit-box-decoration-break:clone;`
+        名称: "糖纸云片",
+        描述: "像手帐里的半透明贴纸，边缘更圆润，也更有个性。",
+        样式: (color) => `background:linear-gradient(180deg, transparent 10%, ${color} 10%, ${color} 84%, transparent 84%); padding:0.02em 0.24em; border-radius:0.56em 0.18em 0.48em 0.22em; box-decoration-break:clone; -webkit-box-decoration-break:clone;`
     },
     "soft-underline": {
-        名称: "下划荧光",
-        描述: "只在文字底部形成柔和高亮，适合长文标注。",
-        样式: (color) => `background:linear-gradient(180deg, transparent 0, transparent 62%, ${color} 62%, ${color} 100%); padding:0 0.08em 0.02em; border-radius:0.16em; box-decoration-break:clone; -webkit-box-decoration-break:clone;`
+        名称: "果冻托底",
+        描述: "底部像一块圆润果冻托住文字，比普通下划线更柔和。",
+        样式: (color) => `background:linear-gradient(180deg, transparent 0, transparent 45%, ${color} 45%, ${color} 100%); padding:0.02em 0.22em 0.06em; border-radius:0.5em 0.2em 0.4em 0.28em; box-decoration-break:clone; -webkit-box-decoration-break:clone;`
     }
 };
 
@@ -70,8 +76,12 @@ function 获取高亮样式(styleKey, color) {
     return 当前预设.样式(color);
 }
 
-function 获取高亮预览HTML(styleKey, color, text = "高亮预览") {
-    return `<span style="${获取高亮样式(styleKey, color)}">${text}</span>`;
+function 获取高亮预览HTML(styleKey, color, text = "高亮预览", textColor = "") {
+    let 样式文本 = 获取高亮样式(styleKey, color);
+    if (textColor) {
+        样式文本 += ` color:${textColor};`;
+    }
+    return `<span style="${样式文本}">${text}</span>`;
 }
 
 function 获取背景颜色槽位(settings, color) {
@@ -1587,10 +1597,16 @@ class MyPlugin extends obsidian.Plugin {
     }
 
     获取高亮样式表文本() {
-        const 颜色列表 = [this.settings.bColor1, this.settings.bColor2, this.settings.bColor3, this.settings.bColor4, this.settings.bColor5];
-        return 颜色列表.map((_color, index) => {
-            return `span.zh-enhanced-highlight.zh-enhanced-highlight-${index + 1}{${获取高亮样式(this.settings.highlightStylePreset, _color)}}`;
-        }).join("\n");
+        const 日间颜色列表 = [this.settings.bColor1, this.settings.bColor2, this.settings.bColor3, this.settings.bColor4, this.settings.bColor5];
+        const 夜间颜色列表 = [this.settings.darkBColor1, this.settings.darkBColor2, this.settings.darkBColor3, this.settings.darkBColor4, this.settings.darkBColor5];
+        const 样式规则 = [];
+        日间颜色列表.forEach((_color, index) => {
+            样式规则.push(`span.zh-enhanced-highlight.zh-enhanced-highlight-${index + 1}{${获取高亮样式(this.settings.highlightStylePreset, _color)}}`);
+        });
+        夜间颜色列表.forEach((_color, index) => {
+            样式规则.push(`body.theme-dark span.zh-enhanced-highlight.zh-enhanced-highlight-${index + 1}{${获取高亮样式(this.settings.highlightStylePreset, _color)} color:${this.settings.darkHighlightTextColor};}`);
+        });
+        return 样式规则.join("\n");
     }
 
     更新高亮样式表() {
@@ -4563,14 +4579,18 @@ class editSettingsTab extends obsidian.PluginSettingTab {
             背景样式预览.empty();
             背景样式预览.createEl('div', { text: `当前样式：${预设.名称}` });
             背景样式预览.createEl('div', { text: 预设.描述, attr: { style: 'margin: 6px 0 10px; color: var(--text-muted);' } });
-            const 预览行 = 背景样式预览.createDiv({ attr: { style: 'display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom: 12px;' } });
-            预览行.createDiv({ text: '示例：', attr: { style: 'color: var(--text-muted);' } });
-            [this.plugin.settings.bColor1, this.plugin.settings.bColor2, this.plugin.settings.bColor3].forEach((color, index) => {
-                预览行.createDiv({
-                    attr: { style: 'font-size: 14px; line-height: 1.9;' },
-                    text: ''
-                }).innerHTML = 获取高亮预览HTML(this.plugin.settings.highlightStylePreset, color, `预览 ${index + 1}`);
-            });
+            const 创建预览行 = (标题, 颜色列表, 文字颜色 = '') => {
+                const 预览行 = 背景样式预览.createDiv({ attr: { style: 'display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom: 10px;' } });
+                预览行.createDiv({ text: 标题, attr: { style: 'color: var(--text-muted); min-width: 48px;' } });
+                颜色列表.forEach((color, index) => {
+                    预览行.createDiv({
+                        attr: { style: 'font-size: 14px; line-height: 1.9;' },
+                        text: ''
+                    }).innerHTML = 获取高亮预览HTML(this.plugin.settings.highlightStylePreset, color, `预览 ${index + 1}`, 文字颜色);
+                });
+            };
+            创建预览行('日间：', [this.plugin.settings.bColor1, this.plugin.settings.bColor2, this.plugin.settings.bColor3]);
+            创建预览行('夜间：', [this.plugin.settings.darkBColor1, this.plugin.settings.darkBColor2, this.plugin.settings.darkBColor3], this.plugin.settings.darkHighlightTextColor);
         };
 
         new obsidian.Setting(containerEl)
@@ -4637,6 +4657,74 @@ class editSettingsTab extends obsidian.PluginSettingTab {
         heatmapColourPicker5.value= this.plugin.settings.bColor5;
         heatmapColourPicker5.addEventListener("change", async () => {
             this.plugin.settings.bColor5 = heatmapColourPicker5.value;
+            await this.plugin.saveSettings();
+            渲染背景样式预览();
+        });
+
+        new obsidian.Setting(containerEl)
+            .setName('🌙 暗色主题高亮文字颜色')
+            .setDesc('暗色主题下被高亮包裹文字的颜色，默认值为 #FEF2DF，可在这里微调。')
+
+        const darkHighlightTextPicker = containerEl.createEl("input", {
+            type: "color",
+        });
+        darkHighlightTextPicker.value = this.plugin.settings.darkHighlightTextColor;
+        darkHighlightTextPicker.addEventListener("change", async () => {
+            this.plugin.settings.darkHighlightTextColor = darkHighlightTextPicker.value;
+            await this.plugin.saveSettings();
+            渲染背景样式预览();
+        });
+
+        new obsidian.Setting(containerEl)
+            .setName('🌙 暗色主题专属高亮背景')
+            .setDesc('暗色主题下使用单独的 1-5 号背景色，避免沿用日间浅色过亮、与浅色文字混在一起。')
+
+        const darkHeatmapColourPicker1 = containerEl.createEl("input", {
+            type: "color",
+        });
+        darkHeatmapColourPicker1.value = this.plugin.settings.darkBColor1;
+        darkHeatmapColourPicker1.addEventListener("change", async () => {
+            this.plugin.settings.darkBColor1 = darkHeatmapColourPicker1.value;
+            await this.plugin.saveSettings();
+            渲染背景样式预览();
+        });
+
+        const darkHeatmapColourPicker2 = containerEl.createEl("input", {
+            type: "color",
+        });
+        darkHeatmapColourPicker2.value = this.plugin.settings.darkBColor2;
+        darkHeatmapColourPicker2.addEventListener("change", async () => {
+            this.plugin.settings.darkBColor2 = darkHeatmapColourPicker2.value;
+            await this.plugin.saveSettings();
+            渲染背景样式预览();
+        });
+
+        const darkHeatmapColourPicker3 = containerEl.createEl("input", {
+            type: "color",
+        });
+        darkHeatmapColourPicker3.value = this.plugin.settings.darkBColor3;
+        darkHeatmapColourPicker3.addEventListener("change", async () => {
+            this.plugin.settings.darkBColor3 = darkHeatmapColourPicker3.value;
+            await this.plugin.saveSettings();
+            渲染背景样式预览();
+        });
+
+        const darkHeatmapColourPicker4 = containerEl.createEl("input", {
+            type: "color",
+        });
+        darkHeatmapColourPicker4.value = this.plugin.settings.darkBColor4;
+        darkHeatmapColourPicker4.addEventListener("change", async () => {
+            this.plugin.settings.darkBColor4 = darkHeatmapColourPicker4.value;
+            await this.plugin.saveSettings();
+            渲染背景样式预览();
+        });
+
+        const darkHeatmapColourPicker5 = containerEl.createEl("input", {
+            type: "color",
+        });
+        darkHeatmapColourPicker5.value = this.plugin.settings.darkBColor5;
+        darkHeatmapColourPicker5.addEventListener("change", async () => {
+            this.plugin.settings.darkBColor5 = darkHeatmapColourPicker5.value;
             await this.plugin.saveSettings();
             渲染背景样式预览();
         });
