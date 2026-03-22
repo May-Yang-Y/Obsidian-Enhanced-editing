@@ -28,6 +28,7 @@ const DEFAULT_SETTINGS = {
     version: "0.4.5",
     hColor: "",
     bColor: "",
+    highlightStylePreset: "soft-fill",
     hColor1: "#F36208",
     hColor2: "#81B300",
     hColor3: "#2485E3",
@@ -38,8 +39,57 @@ const DEFAULT_SETTINGS = {
     bColor2: "#CDF469",
     bColor3: "#A0CCF6",
     bColor4: "#F0A7D8",
-    bColor5: "#ADEFEF"
+    bColor5: "#ADEFEF",
+    darkBColor1: "#7A4A16",
+    darkBColor2: "#5C6F18",
+    darkBColor3: "#24558F",
+    darkBColor4: "#7A2F67",
+    darkBColor5: "#1B6C6B",
+    darkHighlightTextColor: "#FEF2DF"
 };
+
+const 高亮样式预设 = {
+    "soft-fill": {
+        名称: "柔和底色",
+        描述: "轻微圆角与留白，更接近舒服耐看的荧光笔。",
+        样式: (color) => `background:${color}; padding:0 0.18em; border-radius:0.22em; box-decoration-break:clone; -webkit-box-decoration-break:clone;`
+    },
+    "rounded-tag": {
+        名称: "圆角标签",
+        描述: "更像标签卡片，适合强调重点术语。",
+        样式: (color) => `background:${color}; padding:0.08em 0.38em; border-radius:999px; box-decoration-break:clone; -webkit-box-decoration-break:clone;`
+    },
+    "marker-line": {
+        名称: "糖纸云片",
+        描述: "像手帐里的半透明贴纸，边缘更圆润，也更有个性。",
+        样式: (color) => `background:linear-gradient(180deg, transparent 10%, ${color} 10%, ${color} 84%, transparent 84%); padding:0.02em 0.24em; border-radius:0.56em 0.18em 0.48em 0.22em; box-decoration-break:clone; -webkit-box-decoration-break:clone;`
+    },
+    "soft-underline": {
+        名称: "果冻托底",
+        描述: "底部像一块圆润果冻托住文字，比普通下划线更柔和。",
+        样式: (color) => `background:linear-gradient(180deg, transparent 0, transparent 45%, ${color} 45%, ${color} 100%); padding:0.02em 0.22em 0.06em; border-radius:0.5em 0.2em 0.4em 0.28em; box-decoration-break:clone; -webkit-box-decoration-break:clone;`
+    }
+};
+
+function 获取高亮样式(styleKey, color) {
+    const 当前预设 = 高亮样式预设[styleKey] || 高亮样式预设["soft-fill"];
+    return 当前预设.样式(color);
+}
+
+function 获取高亮预览HTML(styleKey, color, text = "高亮预览", textColor = "") {
+    let 样式文本 = 获取高亮样式(styleKey, color);
+    if (textColor) {
+        样式文本 += ` color:${textColor};`;
+    }
+    return `<span style="${样式文本}">${text}</span>`;
+}
+
+function 获取背景颜色槽位(settings, color) {
+    const 当前颜色 = (color || "").toLowerCase();
+    const 颜色列表 = [settings.bColor1, settings.bColor2, settings.bColor3, settings.bColor4, settings.bColor5]
+        .map((_color) => (_color || "").toLowerCase());
+    return 颜色列表.indexOf(当前颜色) + 1;
+}
 
 var 简体字表 = "皑蔼碍爱肮翱袄奥坝罢摆败颁办绊帮绑镑谤剥饱宝报鲍辈贝钡狈备惫绷笔毕毙币闭边编贬变辩辫标鳖别瘪濒滨宾摈饼并拨钵铂驳卜补财参蚕残惭惨灿苍舱仓沧厕侧册测层诧搀掺蝉馋谗缠铲产阐颤场尝长偿肠厂畅钞车彻尘沉陈衬撑称惩诚骋痴迟驰耻齿炽冲虫宠畴踌筹绸丑橱厨锄雏础储触处传疮闯创锤纯绰辞词赐聪葱囱从丛凑蹿窜错达带贷担单郸掸胆惮诞弹当挡党荡档捣岛祷导盗灯邓敌涤递缔颠点垫电淀凋钓调迭谍叠钉顶锭订丢东动栋冻斗犊独读赌镀锻断缎兑队对吨顿钝夺堕鹅额讹恶饿儿尔饵贰发罚阀珐矾钒烦范贩饭访纺飞诽废费纷坟奋愤粪丰枫锋风疯冯缝讽凤肤辐抚辅赋复负讣妇缚该钙盖干杆赶秆赣冈刚钢纲岗皋镐搁鸽阁铬个给龚宫巩贡钩沟苟构购够蛊顾剐挂关观馆惯贯广规硅归龟闺轨诡柜贵刽辊滚锅国过骇韩汉号阂鹤贺横轰鸿红后壶护沪户哗华画划话怀坏欢环还缓换唤痪焕涣黄谎挥辉毁贿秽会烩汇讳诲绘荤浑伙获货祸击机积饥迹讥鸡绩缉极辑级挤几蓟剂济计记际继纪夹荚颊贾钾价驾歼监坚笺间艰缄茧检碱硷拣捡简俭减荐槛鉴践贱见键舰剑饯渐溅涧将浆蒋桨奖讲酱胶浇骄娇搅铰矫侥脚饺缴绞轿较秸阶节茎鲸惊经颈静镜径痉竞净纠厩旧驹举据锯惧剧鹃绢杰洁结诫届紧锦仅谨进晋烬尽劲荆觉决诀绝钧军骏开凯颗壳课垦恳抠库裤夸块侩宽矿旷况亏岿窥馈溃扩阔蜡腊莱来赖蓝栏拦篮阑兰澜谰揽览懒缆烂滥琅捞劳涝乐镭垒类泪篱狸离里鲤礼丽厉励砾历沥隶俩联莲连镰怜涟帘敛脸链恋炼练粮凉两辆谅疗辽镣猎临邻鳞凛赁龄铃凌灵岭领馏刘龙聋咙笼垄拢陇楼娄搂篓芦卢颅庐炉掳卤虏鲁赂禄录陆驴吕铝侣屡缕虑滤绿峦挛孪滦乱抡轮伦仑沦纶论萝罗逻锣箩骡骆络妈玛码蚂马骂吗买麦卖迈脉瞒馒蛮满谩猫锚铆贸么霉没镁门闷们锰梦眯谜弥觅幂绵缅庙灭悯闽鸣铭谬谋亩呐钠纳难挠脑恼闹馁内拟你腻撵捻酿鸟聂啮镊镍柠狞宁拧泞钮纽脓浓农疟诺欧鸥殴呕沤盘庞抛赔喷鹏骗飘频贫苹凭评泼颇扑铺朴谱栖凄脐齐骑岂启气弃讫牵扦钎铅迁签谦钱钳潜浅谴堑枪呛墙蔷强抢锹桥乔侨翘窍窃钦亲寝轻氢倾顷请庆琼穷趋区躯驱龋颧权劝却鹊确让饶扰绕热韧认纫荣绒软锐闰润洒萨鳃赛叁伞丧骚扫涩杀刹纱筛晒删闪陕赡缮墒伤赏烧绍赊摄慑设绅审婶肾渗声绳胜圣师狮湿诗尸时蚀实识驶势适释饰视试寿兽枢输书赎属术树竖数帅双谁税顺说硕烁丝饲耸怂颂讼诵擞苏诉肃虽随绥岁孙损笋缩琐锁獭挞抬台态摊贪瘫滩坛谭谈叹汤烫涛绦讨腾誊锑题体屉条贴铁厅听烃铜统头秃图涂团颓蜕脱鸵驮驼椭洼袜弯湾顽万网韦违围为潍维苇伟伪纬喂谓卫温闻纹稳问瓮挝蜗涡窝卧呜钨乌污诬无芜吴坞雾务误锡牺袭习铣戏细虾辖峡侠狭厦吓锨鲜纤咸贤衔闲显险现献县馅羡宪线厢镶乡详响项萧嚣销晓啸蝎协挟携胁谐写泻谢锌衅兴凶汹锈绣虚嘘须许叙绪续轩悬选癣绚学勋询寻驯训讯逊压鸦鸭哑亚讶阉烟盐严岩颜阎艳厌砚彦谚验鸯杨扬疡阳痒养样瑶摇尧遥窑谣药爷页业叶一医铱颐遗仪彝蚁艺亿忆义诣议谊译异绎荫阴银饮隐樱婴鹰应缨莹萤营荧蝇赢颖哟拥佣痈踊咏涌优忧邮铀犹游诱于舆鱼渔娱与屿语吁御狱誉预驭鸳渊辕园员圆缘远愿约跃钥岳粤悦阅云郧匀陨运蕴酝晕韵杂灾载攒暂赞赃脏凿枣灶责择则泽贼赠扎札轧铡闸栅诈斋债毡盏斩辗崭栈战绽张涨帐账胀赵蛰辙锗这贞针侦诊镇阵挣睁狰争帧症郑证织职执纸志挚掷帜质滞钟终种肿众诌轴皱昼骤猪诸诛烛瞩嘱贮铸筑注驻专砖转赚桩庄装妆壮状锥赘坠缀谆准着浊兹资渍踪综总纵邹诅组钻锕嗳嫒瑷暧霭谙铵鹌媪骜鳌钯呗钣鸨龅鹎贲锛荜哔滗铋筚跸苄缏笾骠飑飙镖镳鳔傧缤槟殡膑镔髌鬓禀饽钹鹁钸骖黪恻锸侪钗冁谄谶蒇忏婵骣觇禅镡伥苌怅阊鲳砗伧谌榇碜龀枨柽铖铛饬鸱铳俦帱雠刍绌蹰钏怆缍鹑辍龊鹚苁骢枞辏撺锉鹾哒鞑骀绐殚赕瘅箪谠砀裆焘镫籴诋谛绨觌镝巅钿癫铫鲷鲽铤铥岽鸫窦渎椟牍笃黩簖怼镦炖趸铎谔垩阏轭锇锷鹗颚颛鳄诶迩铒鸸鲕钫鲂绯镄鲱偾沣凫驸绂绋赙麸鲋鳆钆赅尴擀绀戆睾诰缟锆纥镉颍亘赓绠鲠诟缑觏诂毂钴锢鸪鹄鹘鸹掴诖掼鹳鳏犷匦刿妫桧鲑鳜衮绲鲧埚呙帼椁蝈铪阚绗颉灏颢诃阖蛎黉讧荭闳鲎浒鹕骅桦铧奂缳锾鲩鳇诙荟哕浍缋珲晖诨馄阍钬镬讦诘荠叽哜骥玑觊齑矶羁虿跻霁鲚鲫郏浃铗镓蛲谏缣戋戬睑鹣笕鲣鞯绛缰挢峤鹪鲛疖颌鲒卺荩馑缙赆觐刭泾迳弪胫靓阄鸠鹫讵屦榉飓钜锔窭龃锩镌隽谲珏皲剀垲忾恺铠锴龛闶钪铐骒缂轲钶锞颔龈铿喾郐哙脍狯髋诓诳邝圹纩贶匮蒉愦聩篑阃锟鲲蛴崃徕涞濑赉睐铼癞籁岚榄斓镧褴阆锒唠崂铑铹痨鳓诔缧俪郦坜苈莅蓠呖逦骊缡枥栎轹砺锂鹂疠粝跞雳鲡鳢蔹奁潋琏殓裢裣鲢魉缭钌鹩蔺廪檩辚躏绫棂蛏鲮浏骝绺镏鹨茏泷珑栊胧砻偻蒌喽嵝镂瘘耧蝼髅垆撸噜闾泸渌栌橹轳辂辘氇胪鸬鹭舻鲈脔娈栾鸾銮囵荦猡泺椤脶镙榈褛锊呒唛嬷杩劢缦镘颡鳗麽扪焖懑钔芈谧猕祢渑腼黾缈缪闵缗谟蓦馍殁镆钼铙讷铌鲵辇鲶茑袅陧蘖嗫颟蹑苎咛聍侬哝驽钕傩讴怄瓯蹒疱辔纰罴铍谝骈缥嫔钋镤镨蕲骐绮桤碛颀颃鳍佥荨悭骞缱椠钤嫱樯戗炝锖锵镪羟跄诮谯荞缲硗跷惬锲箧锓揿鲭茕蛱巯赇虮鳅诎岖阒觑鸲诠绻辁铨阕阙悫荛娆桡饪轫嵘蝾缛铷颦蚬飒毵糁缫啬铯穑铩鲨酾讪姗骟钐鳝垧殇觞厍滠畲诜谂渖谥埘莳弑轼贳铈鲥绶摅纾闩铄厮驷缌锶鸶薮馊飕锼谡稣谇荪狲唢睃闼铊鳎钛鲐昙钽锬顸傥饧铴镗韬铽缇鹈阗粜龆鲦恸钭钍抟饨箨鼍娲腽纨绾辋诿帏闱沩涠玮韪炜鲔阌莴龌邬庑怃妩骛鹉鹜饩阋玺觋硖苋莶藓岘猃娴鹇痫蚝籼跹芗饷骧缃飨哓潇骁绡枭箫亵撷绁缬陉荥馐鸺诩顼谖铉镟谑泶鳕埙浔鲟垭娅桠氩厣赝俨兖谳恹闫酽魇餍鼹炀轺鹞鳐靥谒邺晔烨诒呓峄饴怿驿缢轶贻钇镒镱瘗舣铟瘾茔莺萦蓥撄嘤滢潆璎鹦瘿颏罂镛莸铕鱿伛俣谀谕蓣嵛饫阈妪纡觎欤钰鹆鹬龉橼鸢鼋钺郓芸恽愠纭韫殒氲瓒趱錾驵赜啧帻箦谮缯谵诏钊谪辄鹧浈缜桢轸赈祯鸩诤峥钲铮筝骘栉栀轵轾贽鸷蛳絷踬踯觯锺纣绉伫槠铢啭馔颞骓缒诼镯谘缁辎赀眦锱龇鲻偬诹驺鲰镞缵躜鳟讠谫郄勐凼坂垅垴埯埝苘荬荮莜莼菰藁揸吒吣咔咝咴噘噼嚯幞岙嵴彷徼犸狍馀馇馓馕愣憷懔丬溆滟溷漤潴澹甯纟绔绱珉枧桊桉槔橥轱轷赍肷胨飚煳煅熘愍淼砜磙眍钚钷铘铞锃锍锎锏锘锝锪锫锿镅镎镢镥镩镲稆鹋鹛鹱疬疴痖癯裥襁耢颥螨麴鲅鲆鲇鲞鲴鲺鲼鳊鳋鳘鳙鞒鞴齄";
 var 繁体字表 = "皚藹礙愛骯翺襖奧壩罷擺敗頒辦絆幫綁鎊謗剝飽寶報鮑輩貝鋇狽備憊繃筆畢斃幣閉邊編貶變辯辮標鱉別癟瀕濱賓擯餅並撥缽鉑駁蔔補財參蠶殘慚慘燦蒼艙倉滄廁側冊測層詫攙摻蟬饞讒纏鏟產闡顫場嘗長償腸廠暢鈔車徹塵沈陳襯撐稱懲誠騁癡遲馳恥齒熾沖蟲寵疇躊籌綢醜櫥廚鋤雛礎儲觸處傳瘡闖創錘純綽辭詞賜聰蔥囪從叢湊躥竄錯達帶貸擔單鄲撣膽憚誕彈當擋黨蕩檔搗島禱導盜燈鄧敵滌遞締顛點墊電澱雕釣調叠諜疊釘頂錠訂丟東動棟凍鬥犢獨讀賭鍍鍛斷緞兌隊對噸頓鈍奪墮鵝額訛惡餓兒爾餌貳發罰閥琺礬釩煩範販飯訪紡飛誹廢費紛墳奮憤糞豐楓鋒風瘋馮縫諷鳳膚輻撫輔賦復負訃婦縛該鈣蓋幹桿趕稈贛岡剛鋼綱崗臯鎬擱鴿閣鉻個給龔宮鞏貢鉤溝茍構購夠蠱顧剮掛關觀館慣貫廣規矽歸龜閨軌詭櫃貴劊輥滾鍋國過駭韓漢號閡鶴賀橫轟鴻紅後壺護滬戶嘩華畫劃話懷壞歡環還緩換喚瘓煥渙黃謊揮輝毀賄穢會燴匯諱誨繪葷渾夥獲貨禍擊機積饑跡譏雞績緝極輯級擠幾薊劑濟計記際繼紀夾莢頰賈鉀價駕殲監堅箋間艱緘繭檢堿鹼揀撿簡儉減薦檻鑒踐賤見鍵艦劍餞漸濺澗將漿蔣槳獎講醬膠澆驕嬌攪鉸矯僥腳餃繳絞轎較稭階節莖鯨驚經頸靜鏡徑痙競凈糾廄舊駒舉據鋸懼劇鵑絹傑潔結誡屆緊錦僅謹進晉燼盡勁荊覺決訣絕鈞軍駿開凱顆殼課墾懇摳庫褲誇塊儈寬礦曠況虧巋窺饋潰擴闊蠟臘萊來賴藍欄攔籃闌蘭瀾讕攬覽懶纜爛濫瑯撈勞澇樂鐳壘類淚籬貍離裏鯉禮麗厲勵礫歷瀝隸倆聯蓮連鐮憐漣簾斂臉鏈戀煉練糧涼兩輛諒療遼鐐獵臨鄰鱗凜賃齡鈴淩靈嶺領餾劉龍聾嚨籠壟攏隴樓婁摟簍蘆盧顱廬爐擄鹵虜魯賂祿錄陸驢呂鋁侶屢縷慮濾綠巒攣孿灤亂掄輪倫侖淪綸論蘿羅邏鑼籮騾駱絡媽瑪碼螞馬罵嗎買麥賣邁脈瞞饅蠻滿謾貓錨鉚貿麽黴沒鎂門悶們錳夢瞇謎彌覓冪綿緬廟滅憫閩鳴銘謬謀畝吶鈉納難撓腦惱鬧餒內擬妳膩攆撚釀鳥聶嚙鑷鎳檸獰寧擰濘鈕紐膿濃農瘧諾歐鷗毆嘔漚盤龐拋賠噴鵬騙飄頻貧蘋憑評潑頗撲鋪樸譜棲淒臍齊騎豈啟氣棄訖牽扡釬鉛遷簽謙錢鉗潛淺譴塹槍嗆墻薔強搶鍬橋喬僑翹竅竊欽親寢輕氫傾頃請慶瓊窮趨區軀驅齲顴權勸卻鵲確讓饒擾繞熱韌認紉榮絨軟銳閏潤灑薩鰓賽三傘喪騷掃澀殺剎紗篩曬刪閃陜贍繕墑傷賞燒紹賒攝懾設紳審嬸腎滲聲繩勝聖師獅濕詩屍時蝕實識駛勢適釋飾視試壽獸樞輸書贖屬術樹豎數帥雙誰稅順說碩爍絲飼聳慫頌訟誦擻蘇訴肅雖隨綏歲孫損筍縮瑣鎖獺撻擡臺態攤貪癱灘壇譚談嘆湯燙濤絳討騰謄銻題體屜條貼鐵廳聽烴銅統頭禿圖塗團頹蛻脫鴕馱駝橢窪襪彎灣頑萬網韋違圍為濰維葦偉偽緯餵謂衛溫聞紋穩問甕撾蝸渦窩臥嗚鎢烏汙誣無蕪吳塢霧務誤錫犧襲習銑戲細蝦轄峽俠狹廈嚇鍁鮮纖鹹賢銜閑顯險現獻縣餡羨憲線廂鑲鄉詳響項蕭囂銷曉嘯蠍協挾攜脅諧寫瀉謝鋅釁興兇洶銹繡虛噓須許敘緒續軒懸選癬絢學勛詢尋馴訓訊遜壓鴉鴨啞亞訝閹煙鹽嚴巖顏閻艷厭硯彥諺驗鴦楊揚瘍陽癢養樣瑤搖堯遙窯謠藥爺頁業葉壹醫銥頤遺儀彜蟻藝億憶義詣議誼譯異繹蔭陰銀飲隱櫻嬰鷹應纓瑩螢營熒蠅贏穎喲擁傭癰踴詠湧優憂郵鈾猶遊誘於輿魚漁娛與嶼語籲禦獄譽預馭鴛淵轅園員圓緣遠願約躍鑰嶽粵悅閱雲鄖勻隕運蘊醞暈韻雜災載攢暫贊贓臟鑿棗竈責擇則澤賊贈紮劄軋鍘閘柵詐齋債氈盞斬輾嶄棧戰綻張漲帳賬脹趙蟄轍鍺這貞針偵診鎮陣掙睜猙爭幀癥鄭證織職執紙誌摯擲幟質滯鐘終種腫眾謅軸皺晝驟豬諸誅燭矚囑貯鑄築註駐專磚轉賺樁莊裝妝壯狀錐贅墜綴諄準著濁茲資漬蹤綜總縱鄒詛組鉆錒噯嬡璦曖靄諳銨鵪媼驁鰲鈀唄鈑鴇齙鵯賁錛蓽嗶潷鉍篳蹕芐緶籩驃颮飆鏢鑣鰾儐繽檳殯臏鑌髕鬢稟餑鈸鵓鈽驂黲惻鍤儕釵囅諂讖蕆懺嬋驏覘禪鐔倀萇悵閶鯧硨傖諶櫬磣齔棖檉鋮鐺飭鴟銃儔幬讎芻絀躕釧愴綞鶉輟齪鶿蓯驄樅輳攛銼鹺噠韃駘紿殫賧癉簞讜碭襠燾鐙糴詆諦綈覿鏑巔鈿癲銚鯛鰈鋌銩崠鶇竇瀆櫝牘篤黷籪懟鐓燉躉鐸諤堊閼軛鋨鍔鶚顎顓鱷誒邇鉺鴯鮞鈁魴緋鐨鯡僨灃鳧駙紱紼賻麩鮒鰒釓賅尷搟紺戇睪誥縞鋯紇鎘潁亙賡綆鯁詬緱覯詁轂鈷錮鴣鵠鶻鴰摑詿摜鸛鰥獷匭劌媯檜鮭鱖袞緄鯀堝咼幗槨蟈鉿闞絎頡灝顥訶闔蠣黌訌葒閎鱟滸鶘驊樺鏵奐繯鍰鯇鰉詼薈噦澮繢琿暉諢餛閽鈥鑊訐詰薺嘰嚌驥璣覬齏磯羈蠆躋霽鱭鯽郟浹鋏鎵蟯諫縑戔戩瞼鶼筧鰹韉絳韁撟嶠鷦鮫癤頜鮚巹藎饉縉贐覲剄涇逕弳脛靚鬮鳩鷲詎屨櫸颶鉅鋦窶齟錈鐫雋譎玨皸剴塏愾愷鎧鍇龕閌鈧銬騍緙軻鈳錁頷齦鏗嚳鄶噲膾獪髖誆誑鄺壙纊貺匱蕢憒聵簣閫錕鯤蠐崍徠淶瀨賚睞錸癩籟嵐欖斕鑭襤閬鋃嘮嶗銠鐒癆鰳誄縲儷酈壢藶蒞蘺嚦邐驪縭櫪櫟轢礪鋰鸝癘糲躒靂鱺鱧蘞奩瀲璉殮褳襝鰱魎繚釕鷯藺廩檁轔躪綾欞蟶鯪瀏騮綹鎦鷚蘢瀧瓏櫳朧礱僂蔞嘍嶁鏤瘺耬螻髏壚擼嚕閭瀘淥櫨櫓轤輅轆氌臚鸕鷺艫鱸臠孌欒鸞鑾圇犖玀濼欏腡鏍櫚褸鋝嘸嘜嬤榪勱縵鏝顙鰻麼捫燜懣鍆羋謐獼禰澠靦黽緲繆閔緡謨驀饃歿鏌鉬鐃訥鈮鯢輦鯰蔦裊隉蘗囁顢躡苧嚀聹儂噥駑釹儺謳慪甌蹣皰轡紕羆鈹諞駢縹嬪釙鏷鐠蘄騏綺榿磧頎頏鰭僉蕁慳騫繾槧鈐嬙檣戧熗錆鏘鏹羥蹌誚譙蕎繰磽蹺愜鍥篋鋟撳鯖煢蛺巰賕蟣鰍詘嶇闃覷鴝詮綣輇銓闋闕愨蕘嬈橈飪軔嶸蠑縟銣顰蜆颯毿糝繅嗇銫穡鎩鯊釃訕姍騸釤鱔坰殤觴厙灄畬詵諗瀋謚塒蒔弒軾貰鈰鰣綬攄紓閂鑠廝駟緦鍶鷥藪餿颼鎪謖穌誶蓀猻嗩脧闥鉈鰨鈦鮐曇鉭錟頇儻餳鐋鏜韜鋱緹鵜闐糶齠鰷慟鈄釷摶飩籜鼉媧膃紈綰輞諉幃闈溈潿瑋韙煒鮪閿萵齷鄔廡憮嫵騖鵡鶩餼鬩璽覡硤莧薟蘚峴獫嫻鷴癇蠔秈躚薌餉驤緗饗嘵瀟驍綃梟簫褻擷紲纈陘滎饈鵂詡頊諼鉉鏇謔澩鱈塤潯鱘埡婭椏氬厴贗儼兗讞懨閆釅魘饜鼴煬軺鷂鰩靨謁鄴曄燁詒囈嶧飴懌驛縊軼貽釔鎰鐿瘞艤銦癮塋鶯縈鎣攖嚶瀅瀠瓔鸚癭頦罌鏞蕕銪魷傴俁諛諭蕷崳飫閾嫗紆覦歟鈺鵒鷸齬櫞鳶黿鉞鄆蕓惲慍紜韞殞氳瓚趲鏨駔賾嘖幘簀譖繒譫詔釗謫輒鷓湞縝楨軫賑禎鴆諍崢鉦錚箏騭櫛梔軹輊贄鷙螄縶躓躑觶鍾紂縐佇櫧銖囀饌顳騅縋諑鐲諮緇輜貲眥錙齜鯔傯諏騶鯫鏃纘躦鱒訁譾郤猛氹阪壟堖垵墊檾蕒葤蓧蒓菇槁摣咤唚哢噝噅撅劈謔襆嶴脊仿僥獁麅餘餷饊饢楞怵懍爿漵灩混濫瀦淡寧糸絝緔瑉梘棬案橰櫫軲軤賫膁腖飈糊煆溜湣渺碸滾瞘鈈鉕鋣銱鋥鋶鐦鐧鍩鍀鍃錇鎄鎇鎿鐝鑥鑹鑔穭鶓鶥鸌癧屙瘂臒襇繈耮顬蟎麯鮁鮃鮎鯗鯝鯴鱝鯿鰠鰵鱅鞽韝齇";
@@ -1540,16 +1590,46 @@ class MyPlugin extends obsidian.Plugin {
 
     onunload() {
         console.log('卸载插件');
+        if (this.highlightStyleElement) {
+            this.highlightStyleElement.remove();
+            this.highlightStyleElement = null;
+        }
+    }
+
+    获取高亮样式表文本() {
+        const 日间颜色列表 = [this.settings.bColor1, this.settings.bColor2, this.settings.bColor3, this.settings.bColor4, this.settings.bColor5];
+        const 夜间颜色列表 = [this.settings.darkBColor1, this.settings.darkBColor2, this.settings.darkBColor3, this.settings.darkBColor4, this.settings.darkBColor5];
+        const 样式规则 = [];
+        日间颜色列表.forEach((_color, index) => {
+            样式规则.push(`span.zh-enhanced-highlight.zh-enhanced-highlight-${index + 1}{${获取高亮样式(this.settings.highlightStylePreset, _color)}}`);
+        });
+        夜间颜色列表.forEach((_color, index) => {
+            样式规则.push(`body.theme-dark span.zh-enhanced-highlight.zh-enhanced-highlight-${index + 1}{${获取高亮样式(this.settings.highlightStylePreset, _color)} color:${this.settings.darkHighlightTextColor};}`);
+        });
+        return 样式规则.join("\n");
+    }
+
+    更新高亮样式表() {
+        if (!this.settings) {
+            return;
+        }
+        if (!this.highlightStyleElement) {
+            this.highlightStyleElement = document.createElement('style');
+            this.highlightStyleElement.setAttribute('data-enhanced-editing-highlight', 'true');
+            document.head.appendChild(this.highlightStyleElement);
+        }
+        this.highlightStyleElement.textContent = this.获取高亮样式表文本();
     }
 
     async loadSettings() {
         console.log('加载了配置');
         console.log(this.app.customCss.themes);
         this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-     
+        this.更新高亮样式表();
     }
     async saveSettings() {
         await this.saveData(this.settings);
+        this.更新高亮样式表();
     }
 
     /** 以下为基础功能函数 */
@@ -3041,24 +3121,38 @@ class MyPlugin extends obsidian.Plugin {
         this.settings.bColor = _color;
         newNotice = new obsidian.Notice("多彩背景格式刷 已打开！",0);
     }
+    获取背景高亮样式(_color) {
+        return 获取高亮样式(this.settings.highlightStylePreset, _color);
+    }
+
+    获取背景高亮Html(_color, txt) {
+        const 颜色槽位 = 获取背景颜色槽位(this.settings, _color);
+        if (颜色槽位 > 0) {
+            return '\<span class=\"zh-enhanced-highlight zh-enhanced-highlight-'+颜色槽位+'\"\>'+txt+'\<\/span\>';
+        }
+        return '\<span style=\"'+this.获取背景高亮样式(_color)+'\"\>'+txt+'\<\/span\>';
+    }
+
     转换背景颜色() {
         this.获取编辑器信息 ();
         if(所选文本 == ""){return};
-        let _html0 = /\<span style=[\"'][^\<\>]+:[0-9a-zA-Z#]+[\"'][^\<\>]*\>[^\<\>]+\<\/span\>/g;
-        let _html1 = /^\<span style=[\"'][^\<\>]+:[0-9a-zA-Z#]+[\"'][^\<\>]*\>([^\<\>]+)\<\/span\>$/;
-        let _html2 = '\<span style=\"background\:'+this.settings.bColor+'\"\>$1\<\/span\>';
-        let _html3 = /\<span style=[^\<]*$|^[^\>]*span\>/g;	//是否只包含一侧的<>
+        let _html0 = /\<span\s+(?:style|class)=[\"'][^\<\>]*[\"']\>[^\<\>]+\<\/span\>/gi;
+        let _html1 = /^\<span\s+(?:style|class)=([\"'])[^\<\>]*\1\>([^\<\>]+)\<\/span\>$/i;
+        let _html2 = (txt) => this.获取背景高亮Html(this.settings.bColor, txt);
+        let _html3 = /\<span\b[^\>]*$|^[^\>]*\<\/?span\b[^\>]*\>?/i;	//是否只包含一侧的<>
         if (_html3.test(所选文本)){
             return; //new obsidian.Notice("不能转换颜色！");
         }else if (_html0.test(所选文本)){
             if(_html1.test(所选文本)){
-                所选文本 = 所选文本.replace(_html1,_html2); 
+                所选文本 = 所选文本.replace(_html1, function(_all, _quote, _text){
+                    return _html2(_text);
+                }); 
             }else{
-                所选文本 = 所选文本.replace(/\<span style=[\"'][^\<\>]+:[0-9a-zA-Z#]+[\"'][^\<\>]*\>|\<\/span\>/g,"");
+                所选文本 = 所选文本.replace(/\<span\s+(?:style|class)=[\"'][^\<\>]*[\"']\>|\<\/span\>/gi,"");
                 //new obsidian.Notice("需要去除颜色！");
             }
         }else{
-            所选文本 = 所选文本.replace(/^(.+)$/mg,_html2);  //new obsidian.Notice("可以转换颜色！");
+            所选文本 = 所选文本.replace(/^(.+)$/mg,function(_all, _text){ return _html2(_text); });  //new obsidian.Notice("可以转换颜色！");
         }
         this.替换所选文本 (所选文本);
         编辑模式.exec("goRight");
@@ -4275,269 +4369,132 @@ class editSettingsTab extends obsidian.PluginSettingTab {
     }
 
     display() {
-        var plugin = this.plugin;
-        var containerEl = this.containerEl;
+        const containerEl = this.containerEl;
         containerEl.empty();
         containerEl.createEl('h2', { text: "ZH 增强编辑 V"+当前版本 });
-        new obsidian.Setting(containerEl)
-            .setName("📣 转换内部链接「Alt+Z」：在选文两端添加或去除 [[ ]] 符号")
-            .setDesc("支持转换多行文本（需用换行符分隔）或多句文本（需用顿号分隔）。")
+        containerEl.createEl('p', {
+            text: '已将设置页按模块重组，方便按功能分类查找与维护。建议先看“链接与标签”“Markdown 与光标”“Html 样式与高亮”三个模块。',
+            attr: { style: 'color: var(--text-muted); margin-bottom: 16px;' }
+        });
 
-        new obsidian.Setting(containerEl)
+        this.创建链接模块(containerEl);
+        this.创建Markdown模块(containerEl);
+        this.创建Html模块(containerEl);
+        this.创建文本工具模块(containerEl);
+        this.创建行处理模块(containerEl);
+        this.创建反馈模块(containerEl);
+    }
+
+    创建模块(containerEl, 标题, 描述 = '', 展开 = false) {
+        const details = containerEl.createEl('details', {
+            cls: 'enhanced-editing-settings-module',
+            attr: { style: 'margin-bottom: 14px; border: 1px solid var(--background-modifier-border); border-radius: 12px; padding: 10px 14px;' }
+        });
+        if (展开) {
+            details.setAttribute('open', 'open');
+        }
+        details.createEl('summary', {
+            text: 标题,
+            attr: { style: 'cursor: pointer; font-weight: 600; margin-bottom: 8px;' }
+        });
+        if (描述) {
+            details.createEl('p', {
+                text: 描述,
+                attr: { style: 'color: var(--text-muted); margin: 10px 0 14px;' }
+            });
+        }
+        return details.createDiv({ attr: { style: 'padding-bottom: 4px;' } });
+    }
+
+    添加说明列表(containerEl, 文案列表) {
+        const listEl = containerEl.createEl('ul', {
+            attr: { style: 'margin: 8px 0 12px 18px; color: var(--text-normal);' }
+        });
+        文案列表.forEach((文案) => {
+            listEl.createEl('li', { text: 文案, attr: { style: 'margin-bottom: 6px;' } });
+        });
+    }
+
+    添加颜色选择器组(containerEl, 配置列表, 变更后回调) {
+        const row = containerEl.createDiv({
+            attr: { style: 'display:flex; flex-wrap:wrap; gap:12px; margin: 8px 0 16px;' }
+        });
+        配置列表.forEach(({ key, label }) => {
+            const item = row.createDiv({
+                attr: { style: 'display:flex; flex-direction:column; align-items:center; gap:6px; min-width:72px;' }
+            });
+            item.createEl('small', { text: label, attr: { style: 'color: var(--text-muted);' } });
+            const picker = item.createEl('input', { type: 'color' });
+            picker.value = this.plugin.settings[key];
+            picker.addEventListener('change', async () => {
+                this.plugin.settings[key] = picker.value;
+                await this.plugin.saveSettings();
+                if (变更后回调) {
+                    变更后回调();
+                }
+            });
+        });
+    }
+
+    创建链接模块(containerEl) {
+        const section = this.创建模块(containerEl, '链接与标签', '集中放置内部链接、潜在链接、标签和相关入口。', true);
+        new obsidian.Setting(section)
+            .setName("📣 转换内部链接「Alt+Z」：在选文两端添加或去除 [[ ]] 符号")
+            .setDesc("支持转换多行文本（需用换行符分隔）或多句文本（需用顿号分隔）。");
+
+        new obsidian.Setting(section)
             .setName("📣 转换潜在链接「待设置」：判断当前笔记的正文部分，将符合的文本转为内部链接")
-            .setDesc("此功能不处理 Yaml 和标签内容，只对笔记的正文部分进行处理。感谢 平果（184537266）提供建议。")
-        new obsidian.Setting(containerEl)
+            .setDesc("此功能不处理 Yaml 和标签内容，只对笔记的正文部分进行处理。感谢 平果（184537266）提供建议。");
+
+        new obsidian.Setting(section)
             .setName("- 特定标题列表")
             .setDesc("优先处理匹配右侧列表的文本，如右表为空，才按库标题名称进行判断并转换。建议提取全库笔记标题进行整理并放入此处。")
-            .addTextArea((text) => {text.setPlaceholder("一行文字一则标题\n不要使用禁止符号")
-            .setValue(this.plugin.settings.linkWords).onChange((value) => {
-                    this.plugin.settings.linkWords = value;
-                    this.plugin.saveSettings();
-                });
-            text.inputEl.rows = 20;
-            text.inputEl.cols = 60;
-            });
-
-        var div0 = containerEl.createEl('p', {
-            cls: 'recent-files-donation',
-        });
-
-        var linkText = document.createDocumentFragment();
-        linkText.appendText("📣 转换同义链接「Alt+Q」：将选文转换为 [[|选文]] 样式后再选择文档")
-        linkText.appendChild(document.createElement('br'));
-        linkText.appendText("📣 转换标签「Alt+Shift+3」：将选文转换为 #选文 标签样式或反向转换")
-        linkText.appendChild(document.createElement('br'));
-        div0.appendChild(linkText);
-
-        /*
-        new obsidian.Setting(containerEl)
-            .setName('📣 智能换行「Enter」 默认支持```代码块```内换行缩进效果')
-            .setDesc('启用此项后，在非列表或代码块的文本中按下回车后补加一次换行；如想普通换行，可按下 Shift+Enter 键。')
-            .addToggle(toggle => toggle.setValue(this.plugin.settings.twoEnter)
-            .onChange((value) => {
-            this.plugin.settings.twoEnter = value;
-            this.plugin.saveSettings();
-        }));
-
-        new obsidian.Setting(containerEl)
-            .setName("📣 插入制表符「Tab」 在普通文本行中插入制表符效果")
-            .setDesc("启用此项后，在普通文本行中按下 Tab 键会插入4个空格，不再整行缩进。")
-            .addToggle(toggle => toggle.setValue(this.plugin.settings.isTab)
-            .onChange((value) => {
-            this.plugin.settings.isTab = value;
-            this.plugin.saveSettings();
-        }));
-        */
-
-
-        new obsidian.Setting(containerEl)
-            .setName("📣 智能语法「Alt+;」：自动转换、匹配或跳过各种类型的括号或代码块语法")
-            .setDesc("可将[( (< ([ \"[ \'[等组合转为〖〈〔『「，或将dv qy mm CSS js ty等字符串为代码块，将类型词语转为Callout引用语法。")
-
-        new obsidian.Setting(containerEl)
-            .setName("📣 智能粘贴「Ctrl+Alt+V」：将复制的内容粘贴为Md语法样式")
-            .setDesc("依据复制内容的类型，将表格、网址、本地路径或代码直接粘贴为MD表格、超链接或代码块格式。")
-
-        new obsidian.Setting(containerEl)
-            .setName("📣 键控光标移动「Alt+I, +J, +K, +L」")
-            .setDesc("按下Alt +I向上 +J向左 +K向下 +L向右 +U文首 +N文末 快捷键，控制光标移动位置。")
-
-        new obsidian.Setting(containerEl)
-            .setName("📣 键控光标跳转「Alt+Shift +I, +K」")
-            .setDesc("控制光标在标题、列表、待办、代码块和引用等文本行 或在粗体、高亮、注释、删除等MD语法字符之间 上下跳转。")
-        
-        new obsidian.Setting(containerEl)
-            .setName('📣 键控切换同文件夹内的文件显示「Alt+Shift +U +N」')
-            .setDesc('按下快捷键，控制打开同文件夹内的上一文件或下一文件。')
-        
-        new obsidian.Setting(containerEl)
-            .setName('📣 设置标题及粗、斜、删、亮等效果（MarkDown语法）功能')
-            .setDesc('启用后，当未选文本时按下Alt + Shift +C加粗 +G高亮 +S删除线 +U上标 +N下标 等快捷键，即开启或关闭 MD语法「格式刷」功能。')
-
-        var div1 = containerEl.createEl('p', {
-            cls: 'recent-files-donation',
-        });
-        var mdText = document.createDocumentFragment();
-        mdText.appendText('转换标题语法「待设置」：指定或取消当前行文本为N级标题；');
-        mdText.appendChild(document.createElement('br'));
-        mdText.appendText('修改内部链接的显示名称「待设置」：从内部链接里路径中提取名称做为 [[|名称]] 显示。感谢火冷（85399416）增强相关功能；');
-        mdText.appendChild(document.createElement('br'));
-        mdText.appendText('调高标题级别「待设置」：将当前标题级别调高一级（最高为一级）；');
-        mdText.appendChild(document.createElement('br'));
-        mdText.appendText('调低标题级别「待设置」：将当前标题级别调低一级（最低为六级）；');
-        mdText.appendChild(document.createElement('br'));
-        mdText.appendText('调高所有标题级别「待设置」：将所有标题的级别调高一级（最高为一级）。建议：空 QQ:1977878681；');
-        mdText.appendChild(document.createElement('br'));
-        mdText.appendText('调低所有标题级别「待设置」：将所有标题的级别调低一级（最低为六级）。建议：空 QQ:1977878681；');
-        mdText.appendChild(document.createElement('br'));
-        mdText.appendText('转换标签语法「Alt+Shift+3」：将选文转为或去除 #标签 效果；');
-        mdText.appendChild(document.createElement('br'));
-        mdText.appendText('标签双链互转「Ctrl+Alt+Shift+3」：将 [[笔记名]] 与 #笔记名 效果互转；');
-        mdText.appendChild(document.createElement('br'));
-        mdText.appendText('转换粗体语法「Alt+C」：将选文转为或去除 **粗体** 效果；');
-        mdText.appendChild(document.createElement('br'));
-        mdText.appendText('转换斜体语法「Alt+X」：将选文转为或去除 *斜体* 效果；');
-        mdText.appendChild(document.createElement('br'));
-        //mdText.appendText('转换行内代码「Alt+D」：将选文转为或去除 `行内代码` 效果；');
-        //mdText.appendChild(document.createElement('br'));
-        mdText.appendText('转换删除线「Alt+S」：将选文转为或去除 ~~删除线~~ 效果；');
-        mdText.appendChild(document.createElement('br'));
-        mdText.appendText('转换下划线「Alt+H」：将选文转为或去除 <u>下划线</u> 效果；');
-        mdText.appendChild(document.createElement('br'));
-        mdText.appendText('转换代码块「待设置」：将选文转为或去除 ```代码块``` 效果；');
-        mdText.appendChild(document.createElement('br'));
-        mdText.appendText('转换上标语法「待设置」：将选文转为或去除 <sup>上标</sup> 效果；');
-        mdText.appendChild(document.createElement('br'));
-        mdText.appendText('转换下标语法「待设置」：将选文转为或去除 <sub>下标</sub> 效果；');
-        mdText.appendChild(document.createElement('br'));
-        mdText.appendText('[[]]转为[]()语法「待设置」：将划选文本中的[[内部链接]]语法转为[超](链接)语法；');
-        mdText.appendChild(document.createElement('br'));
-        mdText.appendText('[]()转为[[]]语法「待设置」：将划选文本中的[超](链接)语法转为[[内部链接]]语法；');
-        mdText.appendChild(document.createElement('br'));
-        mdText.appendText('去除超链接语法「待设置」：将划选文本中的[]()超链接样式恢复为普通文本，即只保留[]内的内容；');
-        mdText.appendChild(document.createElement('br'));
-        mdText.appendText('转换无语法文本「Ctrl+Alt+Z」：鼠标点击或划选文本的语法部分，可去除相应的MarkDown语法字符；');
-        mdText.appendChild(document.createElement('br'));
-        mdText.appendText('获取无语法文本「Ctrl+Alt+C」：去除划选文本中的所有MarkDown语法字符，并写入剪贴板；');
-        mdText.appendChild(document.createElement('br'));
-        div1.appendChild(mdText);
-        
-        /*
-        new obsidian.Setting(containerEl)
-            .setName("📣 是否启用Blut topaz 主题高亮配色支持")
-            .setDesc("启用此项后，可以使用Blut topaz主题自带的涂黑、填空等效果。")
-            .addToggle(toggle => toggle.setValue(this.plugin.settings.isBT)
-            .onChange((value) => {
-            this.plugin.settings.isBT = value;
-            this.plugin.saveSettings();
-        }));*/
-
-        new obsidian.Setting(containerEl)
-            .setName('📣 设置彩色文字效果（Html语法）功能')
-            .setDesc('点击颜色块调节颜色，在笔记编辑区划选文本后按下「Ctrl+Shift+ 1-5」快捷键，即可转为相应颜色的文本。')
-
-        const textColourPicker1 = containerEl.createEl("input", {
-            type: "color",
-        });
-        textColourPicker1.value = this.plugin.settings.hColor1;
-        textColourPicker1.addEventListener("change", async () => {
-            this.plugin.settings.hColor1 = textColourPicker1.value;
-            await this.plugin.saveSettings();
-        });
-
-        const textColourPicker2 = containerEl.createEl("input", {
-            type: "color",
-        });
-        textColourPicker2.value = this.plugin.settings.hColor2;
-        textColourPicker2.addEventListener("change", async () => {
-            this.plugin.settings.hColor2 = textColourPicker2.value;
-            await this.plugin.saveSettings();
-        });
-        
-        const textColourPicker3 = containerEl.createEl("input", {
-            type: "color",
-        });
-        textColourPicker3.value = this.plugin.settings.hColor3;
-        textColourPicker3.addEventListener("change", async () => {
-            this.plugin.settings.hColor3 = textColourPicker3.value;
-            await this.plugin.saveSettings();
-        });
-
-        const textColourPicker4 = containerEl.createEl("input", {
-            type: "color",
-        });
-        textColourPicker4.value = this.plugin.settings.hColor4;
-        textColourPicker4.addEventListener("change", async () => {
-            this.plugin.settings.hColor4 = textColourPicker4.value;
-            await this.plugin.saveSettings();
-        });
-
-        const textColourPicker5 = containerEl.createEl("input", {
-            type: "color",
-        });
-        textColourPicker5.value = this.plugin.settings.hColor5;
-        textColourPicker5.addEventListener("change", async () => {
-            this.plugin.settings.hColor5 = textColourPicker5.value;
-            await this.plugin.saveSettings();
-        });
-
-        /*
-        new obsidian.Setting(containerEl)
-        .setName('转换文字颜色「Ctrl+Shift+1」')
-        .setDesc('设置文字颜色值（#000000）')
-        .addText(text => {
-            text
-                .setValue(this.plugin.settings.hColor1)
-                .onChange((value) => {
-                this.plugin.settings.hColor1 = value;
-                this.plugin.saveSettings();
-            });
-        });
-        */
-
-        new obsidian.Setting(containerEl)
-            .setName('📣 设置彩色背景效果（Html语法）功能')
-            .setDesc('点击颜色块调节颜色，在笔记编辑区划选文本后按下「Ctrl+Alt+ 1-5」快捷键，即可转为相应背景颜色的文本。')
-
-        const heatmapColourPicker1 = containerEl.createEl("input", {
-            type: "color",
-        });
-        heatmapColourPicker1.value = this.plugin.settings.bColor1;
-        heatmapColourPicker1.addEventListener("change", async () => {
-            this.plugin.settings.bColor1 = heatmapColourPicker1.value;
-            await this.plugin.saveSettings();
-        });
-
-        const heatmapColourPicker2 = containerEl.createEl("input", {
-            type: "color",
-        });
-        heatmapColourPicker2.value = this.plugin.settings.bColor2;
-        heatmapColourPicker2.addEventListener("change", async () => {
-            this.plugin.settings.bColor2 = heatmapColourPicker2.value;
-            await this.plugin.saveSettings();
-        });
-        
-        const heatmapColourPicker3 = containerEl.createEl("input", {
-            type: "color",
-        });
-        heatmapColourPicker3.value = this.plugin.settings.bColor3;
-        heatmapColourPicker3.addEventListener("change", async () => {
-            this.plugin.settings.bColor3 = heatmapColourPicker3.value;
-            await this.plugin.saveSettings();
-        });
-
-        const heatmapColourPicker4 = containerEl.createEl("input", {
-            type: "color",
-        });
-        heatmapColourPicker4.value = this.plugin.settings.bColor4;
-        heatmapColourPicker4.addEventListener("change", async () => {
-            this.plugin.settings.bColor4 = heatmapColourPicker4.value;
-            await this.plugin.saveSettings();
-        });
-
-        const heatmapColourPicker5 = containerEl.createEl("input", {
-            type: "color",
-        });
-        heatmapColourPicker5.value= this.plugin.settings.bColor5;
-        heatmapColourPicker5.addEventListener("change", async () => {
-            this.plugin.settings.bColor5 = heatmapColourPicker5.value;
-            await this.plugin.saveSettings();
-        });
-
-        /*
-        new obsidian.Setting(containerEl)
-            .setName('转换背景颜色「Ctrl+Alt+2」')
-            .setDesc('设置背景颜色值（#000000）')
-            .addText(text => {
-                text
-                    .setValue(this.plugin.settings.bColor2)
+            .addTextArea((text) => {
+                text.setPlaceholder("一行文字一则标题\n不要使用禁止符号")
+                    .setValue(this.plugin.settings.linkWords)
                     .onChange((value) => {
-                    this.plugin.settings.bColor2 = value;
-                    this.plugin.saveSettings();
-                });
+                        this.plugin.settings.linkWords = value;
+                        this.plugin.saveSettings();
+                    });
+                text.inputEl.rows = 12;
+                text.inputEl.cols = 60;
             });
-        */
-        new obsidian.Setting(containerEl)
+
+        this.添加说明列表(section, [
+            '转换同义链接「Alt+Q」：将选文转换为 [[|选文]] 样式后再选择文档。',
+            '转换标签「Alt+Shift+3」：将选文转换为 #选文 标签样式或反向转换。',
+            '标签双链互转「Ctrl+Alt+Shift+3」：将 [[笔记名]] 与 #笔记名 效果互转。',
+            '修改内部链接的显示名称、链接语法互转、去除超链接语法等功能适合继续在本模块内扩展。'
+        ]);
+    }
+
+    创建Markdown模块(containerEl) {
+        const section = this.创建模块(containerEl, 'Markdown 与光标', '收纳 Markdown 语法、格式刷、智能输入和光标控制相关功能。', true);
+        new obsidian.Setting(section)
+            .setName("📣 智能语法「Alt+;」：自动转换、匹配或跳过各种类型的括号或代码块语法")
+            .setDesc("可自动转换括号组合、代码块类型词和 Callout 引用语法，减少手动补全输入。");
+
+        new obsidian.Setting(section)
+            .setName("📣 智能粘贴「Ctrl+Alt+V」：将复制的内容粘贴为Md语法样式")
+            .setDesc("依据复制内容的类型，将表格、网址、本地路径或代码直接粘贴为MD表格、超链接或代码块格式。");
+
+        new obsidian.Setting(section)
+            .setName("📣 键控光标移动「Alt+I, +J, +K, +L」")
+            .setDesc("按下Alt +I向上 +J向左 +K向下 +L向右 +U文首 +N文末 快捷键，控制光标移动位置。");
+
+        new obsidian.Setting(section)
+            .setName("📣 键控光标跳转「Alt+Shift +I, +K」")
+            .setDesc("控制光标在标题、列表、待办、代码块和引用等文本行 或在粗体、高亮、注释、删除等MD语法字符之间 上下跳转。");
+
+        new obsidian.Setting(section)
+            .setName('📣 键控切换同文件夹内的文件显示「Alt+Shift +U +N」')
+            .setDesc('按下快捷键，控制打开同文件夹内的上一文件或下一文件。');
+
+        new obsidian.Setting(section)
+            .setName('📣 设置标题及粗、斜、删、亮等效果（MarkDown语法）功能')
+            .setDesc('启用后，当未选文本时按下Alt + Shift +C加粗 +G高亮 +S删除线 +U上标 +N下标 等快捷键，即开启或关闭 MD语法「格式刷」功能。');
+
+        new obsidian.Setting(section)
             .setName('📣 左侧窗口滚屏幅度')
             .setDesc('按下 Alt+Shift+I +K 快捷键可上下滚动左侧窗口。拖动滑条可调节滚屏幅度（像素值）：')
             .addSlider(slider => slider
@@ -4545,151 +4502,132 @@ class editSettingsTab extends obsidian.PluginSettingTab {
                 .setValue(this.plugin.settings.maxScroll)
                 .setDynamicTooltip()
                 .onChange((value) => {
-                this.plugin.settings.maxScroll = value;
-                this.plugin.saveSettings();
-            }));
-        /*
-        new obsidian.Setting(containerEl)
-            .setName("📣 在状态栏显示 写作进度 → 目标字数")
-            .setDesc("启用此项后，在状态栏显示写作进度。拖动滑条可调节目标字数：")
-            .addToggle(toggle => toggle.setValue(this.plugin.settings.isShowNum)
-                .onChange((value) => {
-                this.plugin.settings.isShowNum = value;
-                this.plugin.saveSettings();
-            }))
-            .addSlider(slider => slider
-                .setLimits(100, 10000, 100)
-                .setValue(this.plugin.settings.maxTry)
-                .setDynamicTooltip()
-                .onChange((value) => {
-                this.plugin.settings.maxTry = value;
-                this.plugin.saveSettings();
-            }));
+                    this.plugin.settings.maxScroll = value;
+                    this.plugin.saveSettings();
+                }));
 
-        */
-        new obsidian.Setting(containerEl)
-            .setName('📣 设置字符、标点、状态等转换功能')
+        this.添加说明列表(section, [
+            '转换标题语法、代码块、上下标、标题级别批量升降等功能仍可继续在这里补完。',
+            '转换粗体「Alt+C」、斜体「Alt+X」、删除线「Alt+S」、下划线「Alt+H」等 Markdown 效果已可直接使用。',
+            '转换无语法文本「Ctrl+Alt+Z」与获取无语法文本「Ctrl+Alt+C」也归属于这一模块。'
+        ]);
+    }
 
-        var div3 = containerEl.createEl('p', {
-            cls: 'recent-files-donation',
-        });
-        var charText = document.createDocumentFragment();
-        charText.appendText('修复外来文本「待设置」：对 PDF 或 OCR 识别的大段文本进行修复（断行、标点）。感谢 zhl111 建议；');
-        charText.appendChild(document.createElement('br'));
-        charText.appendText('修复错误标点「待设置」：将笔记中的汉字中间的英文标点修复为中文标点。感谢叶茜彬（7424863）参与；');
-        charText.appendChild(document.createElement('br'));
-        charText.appendText('修复错误语法「待设置」：修复错误的MD语法，如1。列表、【】（）链接、[[]]()回链等；');
-        charText.appendChild(document.createElement('br'));
-        charText.appendText('转换路径语法「待设置」：将 c:\\windows 与 [](file:///c:\/windows) 路径语法相互转换；');
-        charText.appendChild(document.createElement('br'));
-        charText.appendText('简体转为繁体「待设置」：将笔记中的简体汉字转换为繁体汉字；');
-        charText.appendChild(document.createElement('br'));
-        charText.appendText('繁体转为简体「待设置」：将笔记中的繁体汉字转换为简体汉字；');
-        charText.appendChild(document.createElement('br'));
-        charText.appendText('列表转为图示「待设置」：选中列表文本，转换为相应层级的MerMaid语法图示，支持修改列表后更新图示；');
-        charText.appendChild(document.createElement('br'));
-        charText.appendText('转换待办状态「待设置」：转换选文行首的待办状态，顺序为 -[ x-!?><+] 效果；');
-        charText.appendChild(document.createElement('br'));
-        charText.appendText('转换callout语法「待设置」：转换选文为callout语法样式，即行首补加>[!note]及>符号；');
-        charText.appendChild(document.createElement('br'));
-        charText.appendText('转换填空「待设置」：将选文转为或去除 {{c1::选文}} 效果；');
-        //charText.appendChild(document.createElement('br'));
-        //charText.appendText('【选文】「待设置」：在选文两端添加或去除 【】符号；');
-        //charText.appendChild(document.createElement('br'));
-        //charText.appendText('（选文）「待设置」：在选文两端添加或去除 （）符号；');
-        //charText.appendChild(document.createElement('br'));
-        //charText.appendText('「选文」「待设置」：在选文两端添加或去除 「」符号；');
-        //charText.appendChild(document.createElement('br'));
-        //charText.appendText('《选文》「待设置」：在选文两端添加或去除 《》符号；');
-        div3.appendChild(charText);
+    创建Html模块(containerEl) {
+        const section = this.创建模块(containerEl, 'Html 样式与高亮', '统一管理 Html 彩字、背景高亮、白天/黑夜配色与样式预览。', true);
+        new obsidian.Setting(section)
+            .setName('📣 设置彩色文字效果（Html语法）功能')
+            .setDesc('点击颜色块调节颜色，在笔记编辑区划选文本后按下「Ctrl+Shift+ 1-5」快捷键，即可转为相应颜色的文本。');
 
-        new obsidian.Setting(containerEl)
-            .setName('📣 设置修复断行、选择段句、嵌入网页等功能')
+        this.添加颜色选择器组(section, [
+            { key: 'hColor1', label: '文字 1' },
+            { key: 'hColor2', label: '文字 2' },
+            { key: 'hColor3', label: '文字 3' },
+            { key: 'hColor4', label: '文字 4' },
+            { key: 'hColor5', label: '文字 5' }
+        ]);
 
-        var div4 = containerEl.createEl('p', {
-            cls: 'recent-files-donation',
-        });
-        var toolText = document.createDocumentFragment();
-        toolText.appendText('计算所选结果「F9」：计算所选的四则运算式的结果，并写入剪贴板以备粘贴；');
-        toolText.appendChild(document.createElement('br'));
-        toolText.appendText('修复意外断行「待设置」：修复笔记中的意外断行（删除结尾不是句式标点的换行符）；');
-        toolText.appendChild(document.createElement('br'));
-        toolText.appendText('搜索当前文本「待设置」：通过搜索面板在当前文档中搜索划选内容；');
-        toolText.appendChild(document.createElement('br'));
-        toolText.appendText('选择当前整段「待设置」：选择光标所在的当前整段文本；');
-        toolText.appendChild(document.createElement('br'));
-        toolText.appendText('选择当前整句「待设置」：选择光标所在的当前整句（中文）文本；');
-        toolText.appendChild(document.createElement('br'));
-        toolText.appendText('选择当前语法「Alt+Shift+K」：选择光标所处的MrakDown语法文本（如加粗、高亮、删除、链接等效果）；');
-        toolText.appendChild(document.createElement('br'));
-        toolText.appendText('获取标注文本「待设置」：获取标题、高亮、注释及前缀(#标注\批注\反思)等文本内容；');
-        toolText.appendChild(document.createElement('br'));
-        toolText.appendText('获取当前字符数「待设置」：计算页面中可见字符（汉字、字母、数字、标点）和不可见字符（空格等）个数；');
-        toolText.appendChild(document.createElement('br'));
-        toolText.appendText('自动设置标题「待设置」：将选文中的单行文本（末尾非标点或数字）转为标题；');
-        toolText.appendChild(document.createElement('br'));
-        toolText.appendText('指定当前文件名「待设置」：划选文字后指定为当前笔记的文件名；');
-        toolText.appendChild(document.createElement('br'));
-        toolText.appendText('嵌入当前网址页面「待设置」：在行末插入iframe代码来嵌入所选网址页面；');
-        toolText.appendChild(document.createElement('br'));
-        toolText.appendText('获取相对路径「待设置」：获取当前笔记在库目录内的相对路径；');
-        toolText.appendChild(document.createElement('br'));
-        div4.appendChild(toolText);
+        new obsidian.Setting(section)
+            .setName('📣 设置彩色背景效果（Html语法）功能')
+            .setDesc('点击颜色块调节颜色，在笔记编辑区划选文本后按下「Ctrl+Alt+ 1-5」快捷键，即可转为相应背景颜色的文本。');
 
+        const 背景样式预览 = section.createDiv({ cls: 'enhanced-editing-highlight-preview' });
+        const 渲染背景样式预览 = () => this.渲染背景样式预览(背景样式预览);
 
-        new obsidian.Setting(containerEl)
-            .setName('📣 设置折叠标题、增减空行或空格等功能')
+        new obsidian.Setting(section)
+            .setName('高亮背景样式')
+            .setDesc('为所有 Html 背景高亮统一选择一种更柔和的样式；保存时会尽量写成更短的 class 形式，减少编辑时看到的大段 style 代码。')
+            .addDropdown(dropdown => {
+                Object.keys(高亮样式预设).forEach((key) => {
+                    dropdown.addOption(key, 高亮样式预设[key].名称);
+                });
+                dropdown
+                    .setValue(this.plugin.settings.highlightStylePreset)
+                    .onChange(async (value) => {
+                        this.plugin.settings.highlightStylePreset = value;
+                        await this.plugin.saveSettings();
+                        渲染背景样式预览();
+                    });
+            });
 
-        var div5 = containerEl.createEl('p', {
-            cls: 'recent-files-donation',
-        });
-        var lineText = document.createDocumentFragment();
-        lineText.appendText('折叠同级标题「Ctrl+Shift+Alt+D」：判断当前行的标题层级，将正文中同级标题一次性折叠起来；');
-        lineText.appendChild(document.createElement('br'));
-        lineText.appendText('折叠某级别标题「待设置」：将正文中某一层级的标题一次性折叠起来。感谢火冷（85399416）增强相关功能；');
-        lineText.appendChild(document.createElement('br'));
-        lineText.appendText('删除当前段落「Ctrl+D」：删除当前段落；若在[[]]内会先删除链接内容、在有序列表项内会自动调小后面序号；');
-        lineText.appendChild(document.createElement('br'));
-        lineText.appendText('插入有效空行「Ctrl+Shift+Alt+Enter」：插入带有全角空格的空白行，保证渲染时占据一行；');
-        lineText.appendChild(document.createElement('br'));
-        lineText.appendText('空格转为空行「待设置」：将两个汉字中间的空格或制表符转为空白行；');
-        lineText.appendChild(document.createElement('br'));
-        lineText.appendText('批量插入空行「Ctrl+Shift+L」：在划选的文本行或全文中间批量插入空白行；');
-        lineText.appendChild(document.createElement('br'));
-        lineText.appendText('批量去除空行「Ctrl+Alt+L」：批量去除划选文本或全文中的空白行；');
-        lineText.appendChild(document.createElement('br'));
-        lineText.appendText('上方插入空行「待设置」：在当前文本行的上行插入空白行；');
-        lineText.appendChild(document.createElement('br'));
-        lineText.appendText('下方插入空行「待设置」：在当前文本行的下行插入空白行；');
-        lineText.appendChild(document.createElement('br'));
-        lineText.appendText('全文首行缩进「待设置」：在全文的每个行首添加两个全角空格，产生缩进效果；');
-        lineText.appendChild(document.createElement('br'));
-        lineText.appendText('当前行缩进「待设置」：在当前行文本的行首添加两个全角空格，产生缩进效果；');
-        lineText.appendChild(document.createElement('br'));
-        lineText.appendText('行首添加空格「待设置」：在每行文本的行首添加两个空格；');
-        lineText.appendChild(document.createElement('br'));
-        lineText.appendText('去除行首空格「待设置」：批量去除每行文本的行首空格字符；');
-        lineText.appendChild(document.createElement('br'));
-        lineText.appendText('末尾追加空格「待设置」：在每行文本的末尾追加两个空格；');
-        lineText.appendChild(document.createElement('br'));
-        lineText.appendText('去除末尾空格「待设置」：批量去除每行文本的末尾空格字符；');
-        lineText.appendChild(document.createElement('br'));
-        lineText.appendText('添加间隔空格「待设置」：在正文的汉字与字母之间批量添加空格，如 china 中国；');
-        lineText.appendChild(document.createElement('br'));
-        lineText.appendText('去除所有空格「待设置」：去除正文中所有的全、半角空格。');
-        lineText.appendChild(document.createElement('br'));
-        div5.appendChild(lineText);
+        渲染背景样式预览();
 
-        var div6 = containerEl.createEl('p', {
-            cls: 'recent-files-donation',
-        });
-        var qqText = document.createDocumentFragment();
-        qqText.appendChild(document.createElement('br'));
-        qqText.appendText('🆗 欢迎大家向蚕子(QQ:312815311) 提出操作需求和建议，我们来共同增强编辑功能！');
-        qqText.appendChild(document.createElement('br'));
-        qqText.appendText('🆗 感谢Cuman(QQ:35669852)的指导与调试。');
-        div6.appendChild(qqText);
-    };
+        new obsidian.Setting(section)
+            .setName('☀️ 日间高亮背景')
+            .setDesc('日间主题下使用的 1-5 号背景色。');
+        this.添加颜色选择器组(section, [
+            { key: 'bColor1', label: '日间 1' },
+            { key: 'bColor2', label: '日间 2' },
+            { key: 'bColor3', label: '日间 3' },
+            { key: 'bColor4', label: '日间 4' },
+            { key: 'bColor5', label: '日间 5' }
+        ], 渲染背景样式预览);
+
+        new obsidian.Setting(section)
+            .setName('🌙 暗色主题高亮文字颜色')
+            .setDesc('暗色主题下被高亮包裹文字的颜色，默认值为 #FEF2DF，可在这里微调。');
+        this.添加颜色选择器组(section, [
+            { key: 'darkHighlightTextColor', label: '夜间文字' }
+        ], 渲染背景样式预览);
+
+        new obsidian.Setting(section)
+            .setName('🌙 暗色主题专属高亮背景')
+            .setDesc('暗色主题下使用单独的 1-5 号背景色，避免沿用日间浅色过亮、与浅色文字混在一起。');
+        this.添加颜色选择器组(section, [
+            { key: 'darkBColor1', label: '夜间 1' },
+            { key: 'darkBColor2', label: '夜间 2' },
+            { key: 'darkBColor3', label: '夜间 3' },
+            { key: 'darkBColor4', label: '夜间 4' },
+            { key: 'darkBColor5', label: '夜间 5' }
+        ], 渲染背景样式预览);
+    }
+
+    渲染背景样式预览(containerEl) {
+        const 预设 = 高亮样式预设[this.plugin.settings.highlightStylePreset] || 高亮样式预设['soft-fill'];
+        containerEl.empty();
+        containerEl.createEl('div', { text: `当前样式：${预设.名称}` });
+        containerEl.createEl('div', { text: 预设.描述, attr: { style: 'margin: 6px 0 10px; color: var(--text-muted);' } });
+        const 创建预览行 = (标题, 颜色列表, 文字颜色 = '') => {
+            const 预览行 = containerEl.createDiv({ attr: { style: 'display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom: 10px;' } });
+            预览行.createDiv({ text: 标题, attr: { style: 'color: var(--text-muted); min-width: 48px;' } });
+            颜色列表.forEach((color, index) => {
+                预览行.createDiv({
+                    attr: { style: 'font-size: 14px; line-height: 1.9;' },
+                    text: ''
+                }).innerHTML = 获取高亮预览HTML(this.plugin.settings.highlightStylePreset, color, `预览 ${index + 1}`, 文字颜色);
+            });
+        };
+        创建预览行('日间：', [this.plugin.settings.bColor1, this.plugin.settings.bColor2, this.plugin.settings.bColor3]);
+        创建预览行('夜间：', [this.plugin.settings.darkBColor1, this.plugin.settings.darkBColor2, this.plugin.settings.darkBColor3], this.plugin.settings.darkHighlightTextColor);
+    }
+
+    创建文本工具模块(containerEl) {
+        const section = this.创建模块(containerEl, '文本修复与工具', '将字符修复、断行处理、搜索、选区工具等功能集中展示。');
+        this.添加说明列表(section, [
+            '修复外来文本、修复错误标点、修复错误语法、转换路径语法。',
+            '简繁转换、列表转图示、待办状态转换、callout 语法转换、转换填空。',
+            '计算所选结果「F9」、修复意外断行、搜索当前文本、选择当前整段 / 整句。',
+            '获取标注文本、获取当前字符数、自动设置标题、指定当前文件名、嵌入当前网址页面、获取相对路径。'
+        ]);
+    }
+
+    创建行处理模块(containerEl) {
+        const section = this.创建模块(containerEl, '行处理与空白整理', '把折叠标题、插入空行、空格整理等功能放到同一组，减少分散感。');
+        this.添加说明列表(section, [
+            '折叠同级标题「Ctrl+Shift+Alt+D」与折叠某级别标题。',
+            '删除当前段落「Ctrl+D」、插入有效空行「Ctrl+Shift+Alt+Enter」、批量插入 / 去除空行。',
+            '上下方插入空行、全文首行缩进、当前行缩进、行首 / 末尾空格处理。',
+            '添加间隔空格、去除所有空格等版式整理功能。'
+        ]);
+    }
+
+    创建反馈模块(containerEl) {
+        const section = this.创建模块(containerEl, '反馈与后续扩展', '保留原有反馈信息，并为后续继续补完“待设置”功能留下清晰入口。');
+        this.添加说明列表(section, [
+            '欢迎大家向蚕子(QQ:312815311) 提出操作需求和建议，我们来共同增强编辑功能。',
+            '感谢 Cuman(QQ:35669852) 的指导与调试。'
+        ]);
+    }
 };
 
 module.exports = MyPlugin;
